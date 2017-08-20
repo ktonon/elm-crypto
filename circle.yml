@@ -1,0 +1,19 @@
+machine:
+  pre:
+    - npm install --silent -g elm@0.18.0
+    - npm install -g elm-test elm-doc-test
+
+dependencies:
+  cache_directories:
+    - ~/sysconfcpus
+    - elm-stuff
+  override:
+    - elm package install -y
+    - ./scripts/ci-elm-hack.sh
+
+test:
+  pre:
+    - elm make --yes
+  override:
+    - elm-doc-test
+    - elm test
