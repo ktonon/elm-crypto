@@ -172,7 +172,7 @@ hash : Hash -> List Byte -> List Byte
 hash hash =
     case hash of
         SHA224 ->
-            Hash.sha224
+            identity
 
         SHA256 ->
-            Hash.sha256
+            identity
