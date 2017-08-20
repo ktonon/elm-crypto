@@ -1,23 +1,72 @@
-module Crypto.Bytes exposing (fromUTF8, toHex)
+module Crypto.Bytes exposing (fromInt, fromUTF8, toHex)
+
+{-| Working with lists of bytes.
+
+    import Byte
+
+-}
 
 import Bitwise
 import Byte exposing (Byte)
 import Char
 
 
+{-| Split an integer value into bytes.
+
+    fromInt 0
+    --> [ Byte.fromInt 0 ]
+
+    fromInt 1
+    --> [ Byte.fromInt 1 ]
+
+    fromInt 2
+    --> [ Byte.fromInt 2 ]
+
+    fromInt 255
+    --> [ Byte.fromInt 255 ]
+
+    fromInt 256
+    --> [ Byte.fromInt 1, Byte.fromInt 0 ]
+
+    fromInt 65537
+    --> [ Byte.fromInt 1, Byte.fromInt 0, Byte.fromInt 1 ]
+
+-}
+fromInt : Int -> List Byte
+fromInt val =
+    let
+        n =
+            if val > 1 then
+                logBase 2 (toFloat val)
+                    / 8
+                    |> floor
+                    |> Debug.log "n"
+            else
+                0
+    in
+    List.range 0 n
+        |> List.map
+            (\b ->
+                val
+                    |> Bitwise.shiftRightZfBy (b * 8)
+                    |> Byte.fromInt
+            )
+        |> List.reverse
+
+
 {-| Convert a character into a list of bytes
 
     fromUTF8 "a"
-    --> [ fromInt 97 ]
+    --> [ Byte.fromInt 97 ]
 
     fromUTF8 "I ❤ cheese"
     --> [ 73, 32,
     -->   226, 157, 164,
     -->   32, 99, 104, 101, 101, 115, 101 ]
-    --> |> List.map fromInt
+    --> |> List.map Byte.fromInt
 
     fromUTF8 "dѐf"
-    --> [ 100, 209, 144, 102 ] |> List.map fromInt
+    --> [ 100, 209, 144, 102 ] |> List.map Byte.fromInt
 
 -}
 fromUTF8 : String -> List Byte

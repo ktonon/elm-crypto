@@ -1,6 +1,7 @@
 {
   "root": "../src",
   "tests": [
-    "Crypto.SHA.Preprocess"
+      "Crypto.Bytes",
+      "Crypto.SHA.Preprocess"
   ]
 }

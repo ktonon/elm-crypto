@@ -7,17 +7,27 @@ module Crypto.SHA.Preprocess exposing (calculateK, preprocess)
 -}
 
 import Byte exposing (Byte)
-import Crypto.SHA.Constants exposing (initialHashValues, roundConstants)
+import Crypto.Bytes as Bytes
 import Crypto.SHA.Types exposing (Alg(..), MessageSchedule, RoundConstants, WorkingVars)
 
 
 preprocess : Alg -> List Byte -> List Byte
 preprocess alg message =
     let
-        messageBitCount =
-            (*) 8 <| List.length message
+        messageSize =
+            8 * List.length message
     in
-    message
+    List.append message <|
+        postfix messageSize (calculateK alg messageSize)
+
+
+postfix : Int -> Int -> List Byte
+postfix messageSize k =
+    List.concat
+        [ Bytes.fromInt 0x80
+        , List.repeat ((k - 7) // 8) (Byte.fromInt 0x00)
+        , Bytes.fromInt messageSize
+        ]
 
 
 {-| Calculate the amount of 0 bit padding.
