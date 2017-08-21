@@ -14,22 +14,22 @@ import Char
 {-| Split an integer value into bytes.
 
     fromInt 0
-    --> [ Byte.fromInt 0 ]
+    --> [ 0 ] |> List.map Byte.fromInt
 
     fromInt 1
-    --> [ Byte.fromInt 1 ]
+    --> [ 1 ] |> List.map Byte.fromInt
 
     fromInt 2
-    --> [ Byte.fromInt 2 ]
+    --> [ 2 ] |> List.map Byte.fromInt
 
     fromInt 255
-    --> [ Byte.fromInt 255 ]
+    --> [ 255 ] |> List.map Byte.fromInt
 
     fromInt 256
-    --> [ Byte.fromInt 1, Byte.fromInt 0 ]
+    --> [ 1, 0 ] |> List.map Byte.fromInt
 
     fromInt 65537
-    --> [ Byte.fromInt 1, Byte.fromInt 0, Byte.fromInt 1 ]
+    --> [ 1, 0, 1 ] |> List.map Byte.fromInt
 
 -}
 fromInt : Int -> List Byte
@@ -40,7 +40,6 @@ fromInt val =
                 logBase 2 (toFloat val)
                     / 8
                     |> floor
-                    |> Debug.log "n"
             else
                 0
     in

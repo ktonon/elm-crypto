@@ -2,6 +2,8 @@ module Crypto.SHA.Preprocess exposing (calculateK, preprocess)
 
 {-| SHA-2 preprocess.
 
+    import Byte
+    import Crypto.Bytes exposing (fromUTF8)
     import Crypto.SHA.Types exposing (Alg(..))
 
 -}
@@ -11,26 +13,46 @@ import Crypto.Bytes as Bytes
 import Crypto.SHA.Types exposing (Alg(..), MessageSchedule, RoundConstants, WorkingVars)
 
 
+{-| Append 1 + K zeros + size of message.
+
+    preprocess SHA256 []
+    --> 0x80 :: (List.repeat 63 0x00) |> List.map Byte.fromInt
+
+    preprocess SHA256 (fromUTF8 "hello") |> List.length
+    --> 64
+
+-}
 preprocess : Alg -> List Byte -> List Byte
 preprocess alg message =
-    let
-        messageSize =
-            8 * List.length message
-    in
-    List.append message <|
-        postfix messageSize (calculateK alg messageSize)
+    List.append message <| postfix alg (8 * List.length message)
 
 
-postfix : Int -> Int -> List Byte
-postfix messageSize k =
+postfix : Alg -> Int -> List Byte
+postfix alg messageSize =
     List.concat
         [ Bytes.fromInt 0x80
-        , List.repeat ((k - 7) // 8) (Byte.fromInt 0x00)
-        , Bytes.fromInt messageSize
+        , List.repeat ((calculateK alg messageSize - 7) // 8) (Byte.fromInt 0x00)
+        , Bytes.fromInt messageSize |> fixLength (messageSizeBits alg // 8) (Byte.fromInt 0x00)
         ]
 
 
+fixLength : Int -> a -> List a -> List a
+fixLength w val list =
+    case compare (List.length list) w of
+        EQ ->
+            list
+
+        LT ->
+            List.append (List.repeat (w - List.length list) val) list
+
+        GT ->
+            List.take w list
+
+
 {-| Calculate the amount of 0 bit padding.
+
+    calculateK SHA256 0
+    --> (512 - 64 - 1)
 
     calculateK SHA256 (512 - 64 - 1)
     --> 0
