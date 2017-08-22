@@ -18,8 +18,23 @@ import Crypto.SHA.Types exposing (Alg(..), MessageSchedule, RoundConstants, Work
     preprocess SHA256 []
     --> 0x80 :: (List.repeat 63 0x00) |> List.map Byte.fromInt
 
-    preprocess SHA256 (fromUTF8 "hello") |> List.length
-    --> 64
+    preprocess SHA512 []
+    --> 0x80 :: (List.repeat 127 0x00) |> List.map Byte.fromInt
+
+    let
+        x = preprocess SHA256 (fromUTF8 "I ❤ cheese")
+        y = preprocess SHA512 (fromUTF8 "I ❤ cheese")
+    in
+        ( x |> List.length
+        , y |> List.length
+        , x |> List.reverse |> List.head
+        , y |> List.reverse |> List.head
+        )
+    --> ( 64
+    --> , 128
+    --> , Just <| Byte.fromInt ((9 + 3) * 8)
+    --> , Just <| Byte.fromInt ((9 + 3) * 8)
+    --> )
 
 -}
 preprocess : Alg -> List Byte -> List Byte
@@ -32,21 +47,10 @@ postfix alg messageSize =
     List.concat
         [ Bytes.fromInt 0x80
         , List.repeat ((calculateK alg messageSize - 7) // 8) (Byte.fromInt 0x00)
-        , Bytes.fromInt messageSize |> fixLength (messageSizeBits alg // 8) (Byte.fromInt 0x00)
+        , messageSize
+            |> Bytes.fromInt
+            |> Bytes.fixLength (messageSizeBytes alg) 0
         ]
-
-
-fixLength : Int -> a -> List a -> List a
-fixLength w val list =
-    case compare (List.length list) w of
-        EQ ->
-            list
-
-        LT ->
-            List.append (List.repeat (w - List.length list) val) list
-
-        GT ->
-            List.take w list
 
 
 {-| Calculate the amount of 0 bit padding.
@@ -81,26 +85,26 @@ calculateK alg l =
     in
     (c
         - 1
-        - messageSizeBits alg
+        - (8 * messageSizeBytes alg)
         - (l % c)
     )
         % c
 
 
-messageSizeBits : Alg -> Int
-messageSizeBits alg =
+messageSizeBytes : Alg -> Int
+messageSizeBytes alg =
     case alg of
         SHA224 ->
-            messageSizeBits SHA256
+            messageSizeBytes SHA256
 
         SHA256 ->
-            64
+            8
 
         SHA384 ->
-            messageSizeBits SHA512
+            messageSizeBytes SHA512
 
         SHA512 ->
-            128
+            16
 
 
 chunkSizeBits : Alg -> Int

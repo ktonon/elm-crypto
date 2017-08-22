@@ -17,5 +17,5 @@ sha256 : String -> String
 sha256 message =
     message
         |> Bytes.fromUTF8
-        |> SHA.preprocess SHA256
+        |> SHA.digest SHA256
         |> Bytes.toHex
