@@ -3,14 +3,15 @@ module Crypto.SHA.Preprocess exposing (calculateK, preprocess)
 {-| SHA-2 preprocess.
 
     import Byte
-    import Crypto.Bytes exposing (fromUTF8)
-    import Crypto.SHA.Types exposing (Alg(..))
+    import Word.Bytes exposing (fromUTF8)
+    import Crypto.SHA.Alg exposing (Alg(..))
 
 -}
 
 import Byte exposing (Byte)
-import Crypto.Bytes as Bytes
-import Crypto.SHA.Types exposing (Alg(..), MessageSchedule, RoundConstants, WorkingVars)
+import Crypto.SHA.Alg exposing (Alg(..))
+import Crypto.SHA.Chunk as Chunk
+import Word.Bytes as Bytes
 
 
 {-| Append 1 + K zeros + size of message.
@@ -45,11 +46,9 @@ preprocess alg message =
 postfix : Alg -> Int -> List Byte
 postfix alg messageSize =
     List.concat
-        [ Bytes.fromInt 0x80
+        [ [ Byte.fromInt 0x80 ]
         , List.repeat ((calculateK alg messageSize - 7) // 8) (Byte.fromInt 0x00)
-        , messageSize
-            |> Bytes.fromInt
-            |> Bytes.fixLength (messageSizeBytes alg) 0
+        , Bytes.fromInt (messageSizeBytes alg) messageSize
         ]
 
 
@@ -81,7 +80,7 @@ calculateK : Alg -> Int -> Int
 calculateK alg l =
     let
         c =
-            chunkSizeBits alg
+            Chunk.sizeInBits alg
     in
     (c
         - 1
@@ -105,19 +104,3 @@ messageSizeBytes alg =
 
         SHA512 ->
             16
-
-
-chunkSizeBits : Alg -> Int
-chunkSizeBits alg =
-    case alg of
-        SHA224 ->
-            chunkSizeBits SHA256
-
-        SHA256 ->
-            512
-
-        SHA384 ->
-            chunkSizeBits SHA512
-
-        SHA512 ->
-            1024

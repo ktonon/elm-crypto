@@ -1,10 +1,20 @@
-module Crypto.HMAC exposing (Hash, Key, Message, digest, sha224, sha256)
+module Crypto.HMAC
+    exposing
+        ( Hash
+        , Key
+        , Message
+        , digest
+        , sha224
+        , sha256
+        , sha384
+        , sha512
+        )
 
 {-| Compute HMAC SHA message digests.
 
-    import Crypto.Bytes as Bytes
+    import Word.Bytes as Bytes
 
-@docs digest, sha224, sha256
+@docs digest, sha224, sha256, sha384, sha512
 
 
 ## Aliases
@@ -14,8 +24,9 @@ module Crypto.HMAC exposing (Hash, Key, Message, digest, sha224, sha256)
 -}
 
 import Byte exposing (Byte)
-import Crypto.Bytes as Bytes
-import Crypto.Hash as Hash
+import Crypto.SHA
+import Crypto.SHA.Alg exposing (Alg(..))
+import Word.Bytes as Bytes
 
 
 -- EXPOSED API
@@ -36,35 +47,43 @@ type alias Message =
 {-| Type of hash algorithm.
 -}
 type Hash
-    = SHA224
-    | SHA256
+    = SHA Crypto.SHA.Alg.Alg
 
 
 {-| Use SHA224 as the hash algorithm.
 -}
 sha224 : Hash
 sha224 =
-    SHA224
+    SHA Crypto.SHA.Alg.SHA224
 
 
 {-| Use SHA256 as the hash algorithm.
 -}
 sha256 : Hash
 sha256 =
-    SHA256
+    SHA Crypto.SHA.Alg.SHA256
 
 
+{-| Use SHA224 as the hash algorithm.
+-}
+sha384 : Hash
+sha384 =
+    SHA Crypto.SHA.Alg.SHA384
 
--- Crypto.HMAC.digest sha256
---     (Bytes.fromUTF8 "")
---     (Bytes.fromUTF8 "")
--- --> "b613679a0814d9ec772f95d778c35fc5ff1697c493715653c6c712144292c5ad"
+
+{-| Use SHA256 as the hash algorithm.
+-}
+sha512 : Hash
+sha512 =
+    SHA Crypto.SHA.Alg.SHA512
 
 
 {-| HMAC SHA256 digest.
 
-    0
-    --> 0
+    Crypto.HMAC.digest sha256
+    (Bytes.fromUTF8 "")
+    (Bytes.fromUTF8 "")
+    --> "b613679a0814d9ec772f95d778c35fc5ff1697c493715653c6c712144292c5ad"
 
 -}
 digest : Hash -> Key -> Message -> String
@@ -80,45 +99,36 @@ hmac_ hash message key =
         oKeyPad =
             key
                 |> List.map (Byte.xor <| Byte.fromInt 0x5C)
-                |> i2 "okey"
 
         iKeyPad =
             key
                 |> List.map (Byte.xor <| Byte.fromInt 0x36)
-                |> i2 "ikey"
     in
     List.append iKeyPad message
         |> hash
-        -- |> everyOther
-        |> i2 "inner"
-        |> inspectBytes "inner"
         |> List.append oKeyPad
-        |> i2 "outer"
         |> hash
-        |> i2 "final"
-
-
-inspectBytes : String -> List Byte -> List Byte
-inspectBytes label =
-    \b ->
-        let
-            _ =
-                Debug.log label <| Bytes.toHex b
-        in
-        b
-
-
-i2 : String -> List Byte -> List Byte
-i2 label =
-    \b ->
-        let
-            _ =
-                b |> List.map Byte.toInt |> Debug.log label
-        in
-        b
 
 
 
+-- inspectBytes : String -> List Byte -> List Byte
+-- inspectBytes label =
+--     \b ->
+--         let
+--             _ =
+--                 Debug.log label <| Bytes.toHex b
+--         in
+--         b
+--
+--
+-- i2 : String -> List Byte -> List Byte
+-- i2 label =
+--     \b ->
+--         let
+--             _ =
+--                 b |> List.map Byte.toInt |> Debug.log label
+--         in
+--         b
 -- HELPERS
 
 
@@ -134,9 +144,7 @@ normalizeKey hash blockSize key =
 
         LT ->
             key
-                |> Debug.log "Hashing key"
                 |> hash
-                |> Debug.log "Hashed key"
                 |> padEnd blockSize
 
 
@@ -149,30 +157,37 @@ padEnd blockSize bytes =
 
 
 blockSize : Hash -> Int
-blockSize _ =
-    64
+blockSize (SHA alg) =
+    case alg of
+        SHA224 ->
+            blockSize (SHA SHA256)
+
+        SHA256 ->
+            64
+
+        SHA384 ->
+            blockSize (SHA SHA512)
+
+        SHA512 ->
+            128
 
 
-everyOther : List a -> List a
-everyOther aList =
-    aList
-        |> List.indexedMap (,)
-        |> List.foldl
-            (\( i, val ) acc ->
-                if i % 2 == 0 then
-                    acc
-                else
-                    val :: acc
-            )
-            []
-        |> List.reverse
+
+-- everyOther : List a -> List a
+-- everyOther aList =
+--     aList
+--         |> List.indexedMap (,)
+--         |> List.foldl
+--             (\( i, val ) acc ->
+--                 if i % 2 == 0 then
+--                     acc
+--                 else
+--                     val :: acc
+--             )
+--             []
+--         |> List.reverse
 
 
 hash : Hash -> List Byte -> List Byte
-hash hash =
-    case hash of
-        SHA224 ->
-            identity
-
-        SHA256 ->
-            identity
+hash (SHA alg) =
+    Crypto.SHA.digest alg
