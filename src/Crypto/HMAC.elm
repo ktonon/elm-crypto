@@ -12,18 +12,17 @@ module Crypto.HMAC
 
 {-| Compute HMAC SHA message digests.
 
-    import Word.Bytes as Bytes
-
-@docs digest, sha224, sha256, sha384, sha512
+@docs digest, Key, Message
 
 
-## Aliases
+## Hash Algorithms
 
-@docs Key, Message, Hash
+@docs Hash, sha224, sha256, sha384, sha512
 
 -}
 
 import Byte exposing (Byte)
+import Crypto.HMAC.Digest exposing (digestBytes)
 import Crypto.SHA
 import Crypto.SHA.Alg exposing (Alg(..))
 import Word.Bytes as Bytes
@@ -35,13 +34,13 @@ import Word.Bytes as Bytes
 {-| Secret key
 -}
 type alias Key =
-    List Byte
+    String
 
 
 {-| Message to be hashed
 -}
 type alias Message =
-    List Byte
+    String
 
 
 {-| Type of hash algorithm.
@@ -80,80 +79,20 @@ sha512 =
 
 {-| HMAC SHA256 digest.
 
-    Crypto.HMAC.digest sha256
-    (Bytes.fromUTF8 "")
-    (Bytes.fromUTF8 "")
-    --> "b613679a0814d9ec772f95d778c35fc5ff1697c493715653c6c712144292c5ad"
+    Crypto.HMAC.digest sha256 "key" "The quick brown fox jumps over the lazy dog"
+    --> "f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8"
+
+    Crypto.HMAC.digest sha512 "key" "I ❤ cheese"
+    --> "a885c96140f95cb0b326306edfba49afbb5d38d3a7ed6ccfd67153429cbd3c56d0c514fcaa53b710bb7ba6cc0dfedfdb4d53795acbeb48eb23aa93e5ce9760dd"
 
 -}
 digest : Hash -> Key -> Message -> String
 digest type_ key message =
-    normalizeKey (hash type_) (blockSize type_) key
-        |> hmac_ (hash type_) message
-        |> Bytes.toHex
-
-
-hmac_ : (List Byte -> List Byte) -> Message -> Key -> List Byte
-hmac_ hash message key =
-    let
-        oKeyPad =
-            key
-                |> List.map (Byte.xor <| Byte.fromInt 0x5C)
-
-        iKeyPad =
-            key
-                |> List.map (Byte.xor <| Byte.fromInt 0x36)
-    in
-    List.append iKeyPad message
-        |> hash
-        |> List.append oKeyPad
-        |> hash
-
-
-
--- inspectBytes : String -> List Byte -> List Byte
--- inspectBytes label =
---     \b ->
---         let
---             _ =
---                 Debug.log label <| Bytes.toHex b
---         in
---         b
---
---
--- i2 : String -> List Byte -> List Byte
--- i2 label =
---     \b ->
---         let
---             _ =
---                 b |> List.map Byte.toInt |> Debug.log label
---         in
---         b
--- HELPERS
-
-
-normalizeKey : (List Byte -> List Byte) -> Int -> List Byte -> List Byte
-normalizeKey hash blockSize key =
-    case compare blockSize <| List.length key of
-        EQ ->
-            key
-
-        GT ->
-            key
-                |> padEnd blockSize
-
-        LT ->
-            key
-                |> hash
-                |> padEnd blockSize
-
-
-padEnd : Int -> List Byte -> List Byte
-padEnd blockSize bytes =
-    List.append bytes <|
-        List.repeat
-            (blockSize - List.length bytes)
-            (Byte.fromInt 0)
+    digestBytes
+        (hash type_)
+        (blockSize type_)
+        (Bytes.fromUTF8 key)
+        (Bytes.fromUTF8 message)
 
 
 blockSize : Hash -> Int
@@ -170,22 +109,6 @@ blockSize (SHA alg) =
 
         SHA512 ->
             128
-
-
-
--- everyOther : List a -> List a
--- everyOther aList =
---     aList
---         |> List.indexedMap (,)
---         |> List.foldl
---             (\( i, val ) acc ->
---                 if i % 2 == 0 then
---                     acc
---                 else
---                     val :: acc
---             )
---             []
---         |> List.reverse
 
 
 hash : Hash -> List Byte -> List Byte

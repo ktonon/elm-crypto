@@ -16,4 +16,5 @@ test:
     - elm make --yes
   override:
     - elm-doc-test
-    - elm test
+    - elm test:
+        timeout: 1800

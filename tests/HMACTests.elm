@@ -1,7 +1,9 @@
 module HMACTests exposing (all)
 
 import Byte exposing (Byte)
-import Crypto.HMAC as HMAC exposing (Hash, sha224, sha256, sha384, sha512)
+import Crypto.HMAC.Digest exposing (digestBytes)
+import Crypto.SHA as SHA
+import Crypto.SHA.Alg exposing (Alg(..))
 import Expect
 import Test exposing (Test, describe, test)
 import Word.Bytes as Bytes
@@ -13,12 +15,12 @@ all =
         (List.indexedMap testCase cases |> List.concat)
 
 
-hashFunctions : List Hash
+hashFunctions : List ( Alg, Int )
 hashFunctions =
-    [ sha224
-    , sha256
-    , sha384
-    , sha512
+    [ ( SHA224, 64 )
+    , ( SHA256, 64 )
+    , ( SHA384, 128 )
+    , ( SHA512, 128 )
     ]
 
 
@@ -26,17 +28,17 @@ testCase : Int -> TestCase -> List Test
 testCase index { key, data, digests, comp } =
     List.map2 (,) digests hashFunctions
         |> List.map
-            (\( digest, hash ) ->
-                test (toString (index + 1) ++ ": " ++ toString hash) <|
+            (\( digest, ( alg, blockSize ) ) ->
+                test (toString (index + 1) ++ ": " ++ toString alg) <|
                     \_ ->
                         Expect.equal
                             digest
                             (case comp of
                                 FullMatch ->
-                                    HMAC.digest hash key data
+                                    digestBytes (SHA.digest alg) blockSize key data
 
                                 Truncate n ->
-                                    HMAC.digest hash key data
+                                    digestBytes (SHA.digest alg) blockSize key data
                                         |> String.slice 0 (n * 2)
                             )
             )
