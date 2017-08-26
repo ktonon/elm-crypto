@@ -2,13 +2,11 @@ module Crypto.SHA.Preprocess exposing (calculateK, preprocess)
 
 {-| SHA-2 preprocess.
 
-    import Byte
     import Word.Bytes exposing (fromUTF8)
     import Crypto.SHA.Alg exposing (Alg(..))
 
 -}
 
-import Byte exposing (Byte)
 import Crypto.SHA.Alg exposing (Alg(..))
 import Crypto.SHA.Chunk as Chunk
 import Word.Bytes as Bytes
@@ -17,10 +15,10 @@ import Word.Bytes as Bytes
 {-| Append 1 + K zeros + size of message.
 
     preprocess SHA256 []
-    --> 0x80 :: (List.repeat 63 0x00) |> List.map Byte.fromInt
+    --> 0x80 :: (List.repeat 63 0x00)
 
     preprocess SHA512 []
-    --> 0x80 :: (List.repeat 127 0x00) |> List.map Byte.fromInt
+    --> 0x80 :: (List.repeat 127 0x00)
 
     let
         x = preprocess SHA256 (fromUTF8 "I ❤ cheese")
@@ -33,21 +31,21 @@ import Word.Bytes as Bytes
         )
     --> ( 64
     --> , 128
-    --> , Just <| Byte.fromInt ((9 + 3) * 8)
-    --> , Just <| Byte.fromInt ((9 + 3) * 8)
+    --> , Just <| (9 + 3) * 8
+    --> , Just <| (9 + 3) * 8
     --> )
 
 -}
-preprocess : Alg -> List Byte -> List Byte
+preprocess : Alg -> List Int -> List Int
 preprocess alg message =
     List.append message <| postfix alg (8 * List.length message)
 
 
-postfix : Alg -> Int -> List Byte
+postfix : Alg -> Int -> List Int
 postfix alg messageSize =
     List.concat
-        [ [ Byte.fromInt 0x80 ]
-        , List.repeat ((calculateK alg messageSize - 7) // 8) (Byte.fromInt 0x00)
+        [ [ 0x80 ]
+        , List.repeat ((calculateK alg messageSize - 7) // 8) 0x00
         , Bytes.fromInt (messageSizeBytes alg) messageSize
         ]
 

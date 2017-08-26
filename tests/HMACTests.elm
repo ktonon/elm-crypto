@@ -1,12 +1,12 @@
 module HMACTests exposing (all)
 
-import Byte exposing (Byte)
 import Crypto.HMAC.Digest exposing (digestBytes)
 import Crypto.SHA as SHA
 import Crypto.SHA.Alg exposing (Alg(..))
 import Expect
 import Test exposing (Test, describe, test)
 import Word.Bytes as Bytes
+import Word.Hex as Hex
 
 
 all : Test
@@ -50,8 +50,8 @@ type Compare
 
 
 type alias TestCase =
-    { key : List Byte
-    , data : List Byte
+    { key : List Int
+    , data : List Int
     , digests : List String
     , comp : Compare
     }
@@ -91,7 +91,7 @@ cases =
         ]
         FullMatch
     , TestCase
-        (hex [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19 ])
+        (Hex.toByteList "0102030405060708090a0b0c0d0e0f10111213141516171819")
         (dup 50 0xCD)
         [ "6c11506874013cac6a2abc1bb382627cec6a90d86efc012de7afec5a"
         , "82558a389a443c0ea4cc819899f2083a85f0faa3e578f8077a2e3ff46729665b"
@@ -133,16 +133,11 @@ cases =
 -- HELPERS
 
 
-hex : List Int -> List Byte
-hex =
-    List.map Byte.fromInt
-
-
-str : String -> List Byte
+str : String -> List Int
 str =
     Bytes.fromUTF8
 
 
-dup : Int -> Int -> List Byte
+dup : Int -> Int -> List Int
 dup n hex =
-    List.repeat n (Byte.fromInt hex)
+    List.repeat n hex

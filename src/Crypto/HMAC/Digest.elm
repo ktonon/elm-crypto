@@ -1,35 +1,42 @@
 module Crypto.HMAC.Digest exposing (digestBytes)
 
-import Byte exposing (Byte)
-import Word.Bytes as Bytes
+import Array exposing (Array)
+import Bitwise
+import Word exposing (Word)
+import Word.Hex as Hex
 
 
-digestBytes : (List Byte -> List Byte) -> Int -> List Byte -> List Byte -> String
+type alias Hash =
+    List Int -> Array Word
+
+
+digestBytes : Hash -> Int -> List Int -> List Int -> String
 digestBytes hash blockSize key message =
     key
         |> normalizeKey hash blockSize
         |> hmac_ hash message
-        |> Bytes.toHex
+        |> Hex.fromWordArray
 
 
-hmac_ : (List Byte -> List Byte) -> List Byte -> List Byte -> List Byte
+hmac_ : Hash -> List Int -> List Int -> Array Word
 hmac_ hash message key =
     let
         oKeyPad =
             key
-                |> List.map (Byte.xor <| Byte.fromInt 0x5C)
+                |> List.map (Bitwise.xor 0x5C)
 
         iKeyPad =
             key
-                |> List.map (Byte.xor <| Byte.fromInt 0x36)
+                |> List.map (Bitwise.xor 0x36)
     in
     List.append iKeyPad message
         |> hash
+        |> Word.toBytes
         |> List.append oKeyPad
         |> hash
 
 
-normalizeKey : (List Byte -> List Byte) -> Int -> List Byte -> List Byte
+normalizeKey : Hash -> Int -> List Int -> List Int
 normalizeKey hash blockSize key =
     case compare blockSize <| List.length key of
         EQ ->
@@ -42,12 +49,13 @@ normalizeKey hash blockSize key =
         LT ->
             key
                 |> hash
+                |> Word.toBytes
                 |> padEnd blockSize
 
 
-padEnd : Int -> List Byte -> List Byte
+padEnd : Int -> List Int -> List Int
 padEnd blockSize bytes =
     List.append bytes <|
         List.repeat
             (blockSize - List.length bytes)
-            (Byte.fromInt 0)
+            0

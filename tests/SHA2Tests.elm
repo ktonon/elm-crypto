@@ -12,7 +12,7 @@ import SHA.SHA384ShortMsg
 import SHA.SHA512LongMsg
 import SHA.SHA512ShortMsg
 import Test exposing (Test, describe, test)
-import Word.Bytes as Bytes
+import Word.Hex as Hex
 
 
 all : Test
@@ -33,8 +33,8 @@ testVector name alg num ( md, msg ) =
         \_ ->
             Expect.equal
                 md
-                (Bytes.fromHex msg
-                    |> (Crypto.SHA.digest alg >> Bytes.toHex)
+                (Hex.toByteList msg
+                    |> (Crypto.SHA.digest alg >> Hex.fromWordArray)
                 )
 
 

@@ -21,10 +21,11 @@ module Crypto.HMAC
 
 -}
 
-import Byte exposing (Byte)
+import Array exposing (Array)
 import Crypto.HMAC.Digest exposing (digestBytes)
 import Crypto.SHA
 import Crypto.SHA.Alg exposing (Alg(..))
+import Word exposing (Word)
 import Word.Bytes as Bytes
 
 
@@ -111,6 +112,6 @@ blockSize (SHA alg) =
             128
 
 
-hash : Hash -> List Byte -> List Byte
+hash : Hash -> List Int -> Array Word
 hash (SHA alg) =
     Crypto.SHA.digest alg

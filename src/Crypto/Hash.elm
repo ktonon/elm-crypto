@@ -9,6 +9,7 @@ module Crypto.Hash exposing (sha224, sha256, sha384, sha512)
 import Crypto.SHA as SHA
 import Crypto.SHA.Alg exposing (Alg(..))
 import Word.Bytes as Bytes
+import Word.Hex as Hex
 
 
 {-| Secure Hash Algorithm using 32-bit words and 64 rounds (truncated).
@@ -25,7 +26,7 @@ sha224 message =
     message
         |> Bytes.fromUTF8
         |> SHA.digest SHA224
-        |> Bytes.toHex
+        |> Hex.fromWordArray
 
 
 {-| Secure Hash Algorithm using 32-bit words and 64 rounds.
@@ -39,7 +40,7 @@ sha256 message =
     message
         |> Bytes.fromUTF8
         |> SHA.digest SHA256
-        |> Bytes.toHex
+        |> Hex.fromWordArray
 
 
 {-| Secure Hash Algorithm using 64-bit words and 80 rounds (truncated).
@@ -53,7 +54,7 @@ sha384 message =
     message
         |> Bytes.fromUTF8
         |> SHA.digest SHA384
-        |> Bytes.toHex
+        |> Hex.fromWordArray
 
 
 {-| Secure Hash Algorithm using 64-bit words and 80 rounds.
@@ -67,4 +68,4 @@ sha512 message =
     message
         |> Bytes.fromUTF8
         |> SHA.digest SHA512
-        |> Bytes.toHex
+        |> Hex.fromWordArray
