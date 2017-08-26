@@ -17,4 +17,4 @@ test:
   override:
     - elm-doc-test
     - elm test:
-        timeout: 2700
+        timeout: 7200
