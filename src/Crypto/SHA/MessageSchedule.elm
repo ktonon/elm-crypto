@@ -78,6 +78,12 @@ sigma0 alg word =
                 |> Word.xor (Word.rotateRightBy 8 word)
                 |> Word.xor (Word.shiftRightZfBy 7 word)
 
+        SHA512_224 ->
+            sigma0 SHA512 word
+
+        SHA512_256 ->
+            sigma0 SHA512 word
+
 
 sigma1 : Alg -> Word -> Word
 sigma1 alg word =
@@ -97,6 +103,12 @@ sigma1 alg word =
             Word.rotateRightBy 19 word
                 |> Word.xor (Word.rotateRightBy 61 word)
                 |> Word.xor (Word.shiftRightZfBy 6 word)
+
+        SHA512_224 ->
+            sigma1 SHA512 word
+
+        SHA512_256 ->
+            sigma1 SHA512 word
 
 
 at : Int -> MessageSchedule -> Word

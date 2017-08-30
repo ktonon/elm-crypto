@@ -67,6 +67,12 @@ sizeInBytes alg =
         SHA512 ->
             128
 
+        SHA512_224 ->
+            sizeInBytes SHA512
+
+        SHA512_256 ->
+            sizeInBytes SHA512
+
 
 {-|
 

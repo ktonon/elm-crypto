@@ -8,6 +8,8 @@ type Alg
     | SHA256
     | SHA384
     | SHA512
+    | SHA512_224
+    | SHA512_256
 
 
 wordSize : Alg -> Size
@@ -24,3 +26,9 @@ wordSize alg =
 
         SHA512 ->
             Bit64
+
+        SHA512_224 ->
+            wordSize SHA512
+
+        SHA512_256 ->
+            wordSize SHA512

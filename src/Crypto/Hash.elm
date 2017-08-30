@@ -1,8 +1,16 @@
-module Crypto.Hash exposing (sha224, sha256, sha384, sha512)
+module Crypto.Hash
+    exposing
+        ( sha224
+        , sha256
+        , sha384
+        , sha512
+        , sha512_224
+        , sha512_256
+        )
 
 {-| Secure Hash Algorithms.
 
-@docs sha224, sha256, sha384, sha512
+@docs sha224, sha256, sha384, sha512, sha512_224, sha512_256
 
 -}
 
@@ -68,4 +76,32 @@ sha512 message =
     message
         |> Bytes.fromUTF8
         |> SHA.digest SHA512
+        |> Hex.fromWordArray
+
+
+{-| Secure Hash Algorithm using 64-bit words and 80 rounds (truncated to 224).
+
+    Crypto.Hash.sha512_224 ""
+    --> "6ed0dd02806fa89e25de060c19d3ac86cabb87d6a0ddd05c333b84f4"
+
+-}
+sha512_224 : String -> String
+sha512_224 message =
+    message
+        |> Bytes.fromUTF8
+        |> SHA.digest SHA512_224
+        |> Hex.fromWordArray
+
+
+{-| Secure Hash Algorithm using 64-bit words and 80 rounds (truncated to 256).
+
+    Crypto.Hash.sha512_256 ""
+    --> "c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a"
+
+-}
+sha512_256 : String -> String
+sha512_256 message =
+    message
+        |> Bytes.fromUTF8
+        |> SHA.digest SHA512_256
         |> Hex.fromWordArray

@@ -15,6 +15,4 @@ test:
   pre:
     - elm make --yes
   override:
-    - elm-doc-test
-    - elm test:
-        timeout: 7200
+    - ./run-short-tests.sh

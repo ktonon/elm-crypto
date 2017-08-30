@@ -1,6 +1,6 @@
 {
-    "version": "1.0.0",
-    "summary": "Cryptography with HMAC and SHA (224, 256, 384, 512)",
+    "version": "1.1.0",
+    "summary": "Compute HMAC with SHA-2 hash functions or use SHA-2 directly.",
     "repository": "https://github.com/ktonon/elm-crypto.git",
     "license": "MIT",
     "source-directories": [

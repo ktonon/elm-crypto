@@ -136,6 +136,12 @@ sum1 alg word =
                 |> Word.xor (Word.rotateRightBy 18 word)
                 |> Word.xor (Word.rotateRightBy 41 word)
 
+        SHA512_224 ->
+            sum1 SHA512 word
+
+        SHA512_256 ->
+            sum1 SHA512 word
+
 
 sum0 : Alg -> Word -> Word
 sum0 alg word =
@@ -156,21 +162,8 @@ sum0 alg word =
                 |> Word.xor (Word.rotateRightBy 34 word)
                 |> Word.xor (Word.rotateRightBy 39 word)
 
+        SHA512_224 ->
+            sum0 SHA512 word
 
-
--- |> (\val ->
---         let
---             _ =
---                 Debug.log "step"
---                     (val
---                         |> workingVarsToWords
---                         |> Array.map
---                             (\word ->
---                                 Word.toHex (Array.fromList [ word ])
---                             )
---                         |> Array.toList
---                         |> String.join ","
---                     )
---         in
---         val
---    )
+        SHA512_256 ->
+            sum0 SHA512 word

@@ -8,7 +8,7 @@ module Crypto.SHA.Types
 
 import Array exposing (Array)
 import Crypto.SHA.Alg exposing (Alg(..))
-import Word exposing (Word)
+import Word exposing (Word(..))
 
 
 type alias RoundConstants =
@@ -54,3 +54,22 @@ workingVarsToWords alg { a, b, c, d, e, f, g, h } =
 
         SHA512 ->
             Array.fromList [ a, b, c, d, e, f, g, h ]
+
+        SHA512_224 ->
+            [ a, b, c, d ]
+                |> List.concatMap toSingleWord
+                |> List.take 7
+                |> Array.fromList
+
+        SHA512_256 ->
+            Array.fromList [ a, b, c, d ]
+
+
+toSingleWord : Word -> List Word
+toSingleWord word =
+    case word of
+        D xh xl ->
+            [ W xh, W xl ]
+
+        _ ->
+            [ word ]

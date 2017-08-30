@@ -52,6 +52,32 @@ initialHashValues alg =
                 (D 0x1F83D9AB 0xFB41BD6B)
                 (D 0x5BE0CD19 0x137E2179)
 
+        SHA512_224 ->
+            WorkingVars
+                -- http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+                -- Section 5.3.6.1
+                (D 0x8C3D37C8 0x19544DA2)
+                (D 0x73E19966 0x89DCD4D6)
+                (D 0x1DFAB7AE 0x32FF9C82)
+                (D 0x679DD514 0x582F9FCF)
+                (D 0x0F6D2B69 0x7BD44DA8)
+                (D 0x77E36F73 0x04C48942)
+                (D 0x3F9D85A8 0x6A1D36C8)
+                (D 0x1112E6AD 0x91D692A1)
+
+        SHA512_256 ->
+            WorkingVars
+                -- http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+                -- Section 5.3.6.2
+                (D 0x22312194 0xFC2BF72C)
+                (D 0x9F555FA3 0xC84C64C2)
+                (D 0x2393B86B 0x6F53B151)
+                (D 0x96387719 0x5940EABD)
+                (D 0x96283EE2 0xA88EFFE3)
+                (D 0xBE5E1E25 0x53863992)
+                (D 0x2B0199FC 0x2C85B8AA)
+                (D 0x0EB72DDC 0x81C52CA2)
+
 
 roundConstants : Alg -> RoundConstants
 roundConstants alg =
@@ -211,3 +237,9 @@ roundConstants alg =
             , D 0x5FCB6FAB 0x3AD6FAEC
             , D 0x6C44198C 0x4A475817
             ]
+
+        SHA512_224 ->
+            roundConstants SHA512
+
+        SHA512_256 ->
+            roundConstants SHA512

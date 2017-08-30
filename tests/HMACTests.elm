@@ -35,10 +35,11 @@ testCase index { key, data, digests, comp } =
                             digest
                             (case comp of
                                 FullMatch ->
-                                    digestBytes (SHA.digest alg) blockSize key data
+                                    digestBytes (SHA.digest alg) blockSize key data |> Hex.fromWordArray
 
                                 Truncate n ->
                                     digestBytes (SHA.digest alg) blockSize key data
+                                        |> Hex.fromWordArray
                                         |> String.slice 0 (n * 2)
                             )
             )

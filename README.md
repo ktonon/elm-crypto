@@ -1,6 +1,9 @@
-# Cryptography with HMAC and SHA
+# elm-crypto
 
+[![elm-package](https://img.shields.io/badge/elm-1.1.0-blue.svg)](http://package.elm-lang.org/packages/ktonon/elm-crypto/latest)
 [![CircleCI](https://img.shields.io/circleci/project/github/ktonon/elm-crypto.svg)](https://circleci.com/gh/ktonon/elm-crypto)
+
+Cryptography with HMAC and SHA.
 
 Use SHA-2 hashing functions directly:
 
@@ -30,8 +33,8 @@ Crypto.HMAC.digest sha512 "key" "I ❤ cheese"
 
 Not officially validated through [CAVP][], but unit tested against published test vectors:
 
-* SHA 224, 256, 384, and 512 are unit tested against the [FIPS 180-4][] test vectors (short and long messages).
-* HMAC SHA 224, 256, 384, and 512 are unit tested against [RFC4231][].
+* SHA-2 functions are unit tested against the [FIPS 180-4][] test vectors (short and long messages).
+* HMAC with SHA-2 is unit tested against [RFC4231][].
 
 [CAVP]:http://csrc.nist.gov/groups/STM/cavp/
 [FIPS 180-4]:http://csrc.nist.gov/groups/STM/cavp/secure-hashing.html#shavs

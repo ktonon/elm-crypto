@@ -102,3 +102,9 @@ messageSizeBytes alg =
 
         SHA512 ->
             16
+
+        SHA512_224 ->
+            messageSizeBytes SHA512
+
+        SHA512_256 ->
+            messageSizeBytes SHA512

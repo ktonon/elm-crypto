@@ -3,19 +3,17 @@ module Crypto.HMAC.Digest exposing (digestBytes)
 import Array exposing (Array)
 import Bitwise
 import Word exposing (Word)
-import Word.Hex as Hex
 
 
 type alias Hash =
     List Int -> Array Word
 
 
-digestBytes : Hash -> Int -> List Int -> List Int -> String
+digestBytes : Hash -> Int -> List Int -> List Int -> Array Word
 digestBytes hash blockSize key message =
     key
         |> normalizeKey hash blockSize
         |> hmac_ hash message
-        |> Hex.fromWordArray
 
 
 hmac_ : Hash -> List Int -> List Int -> Array Word
