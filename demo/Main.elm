@@ -60,15 +60,17 @@ view : Model -> Html Msg
 view model =
     div [ style [ ( "margin", "50px" ) ] ] <|
         (++)
-            [ h1 [] [ text "elm-crypto" ]
+            [ h1 [] [ text "elm-crypto demo" ]
             , div []
-                [ col1 "text"
+                [ col1 "message"
                 , col2a SetText model.text
                 ]
             , div []
-                [ col1 "secret"
+                [ col1 "key"
                 , col2a SetSecret model.secret
                 ]
+            , div []
+                [ col1 "HMAC SHA" ]
             ]
             (digests model)
 
@@ -98,7 +100,7 @@ col1 w =
             [ ( "display", "inline-block" )
             , ( "padding", "10px" )
             , ( "padding-left", "0" )
-            , ( "width", "50px" )
+            , ( "width", "100px" )
             ]
         ]
         [ text w ]
