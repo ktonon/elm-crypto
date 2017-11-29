@@ -1,7 +1,7 @@
 # elm-crypto
 
 [![live-demo](https://img.shields.io/badge/live-demo-blue.svg)](http://elm-crypto.betweenconcepts.com)
-[![elm-package](https://img.shields.io/badge/elm-1.1.0-blue.svg)](http://package.elm-lang.org/packages/ktonon/elm-crypto/latest)
+[![elm-package](https://img.shields.io/badge/elm-1.1.1-blue.svg)](http://package.elm-lang.org/packages/ktonon/elm-crypto/latest)
 [![CircleCI](https://img.shields.io/circleci/project/github/ktonon/elm-crypto.svg)](https://circleci.com/gh/ktonon/elm-crypto)
 
 Cryptography with HMAC and SHA.
