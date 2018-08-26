@@ -15,7 +15,7 @@ runSha2Suite ( name, hash, vectors ) =
 
 testVector : String -> Alg -> Int -> ( String, String ) -> Test
 testVector name alg num ( md, msg ) =
-    test (name ++ ": " ++ toString num) <|
+    test (name ++ ": " ++ String.fromInt num) <|
         \_ ->
             Expect.equal
                 md

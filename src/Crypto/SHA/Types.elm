@@ -1,10 +1,9 @@
-module Crypto.SHA.Types
-    exposing
-        ( RoundConstants
-        , WorkingVars
-        , addWorkingVars
-        , workingVarsToWords
-        )
+module Crypto.SHA.Types exposing
+    ( RoundConstants
+    , WorkingVars
+    , addWorkingVars
+    , workingVarsToWords
+    )
 
 import Array exposing (Array)
 import Crypto.SHA.Alg exposing (Alg(..))

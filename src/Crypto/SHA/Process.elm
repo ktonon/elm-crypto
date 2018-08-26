@@ -31,11 +31,14 @@ chunks_ alg words currentHash =
             currentHash
 
         ( Just chunk, rest ) ->
-            chunk
-                |> MessageSchedule.fromChunk alg
-                |> compressLoop alg currentHash
-                |> addWorkingVars currentHash
-                |> chunks_ alg rest
+            let
+                vars =
+                    chunk
+                        |> MessageSchedule.fromChunk alg
+                        |> compressLoop alg currentHash
+                        |> addWorkingVars currentHash
+            in
+            chunks_ alg rest vars
 
 
 compressLoop : Alg -> WorkingVars -> MessageSchedule -> WorkingVars
@@ -43,7 +46,7 @@ compressLoop alg workingVars messageSchedule =
     List.foldl
         (compress alg)
         workingVars
-        (List.map2 (,) (roundConstants alg) (Array.toList messageSchedule))
+        (List.map2 (\a b -> ( a, b )) (roundConstants alg) (Array.toList messageSchedule))
 
 
 {-| for i from 0 to 63

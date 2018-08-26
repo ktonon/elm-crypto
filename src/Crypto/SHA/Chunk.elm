@@ -1,11 +1,10 @@
-module Crypto.SHA.Chunk
-    exposing
-        ( Chunk
-        , next
-        , sizeInBits
-        , sizeInBytes
-        , sizeInWords
-        )
+module Crypto.SHA.Chunk exposing
+    ( Chunk
+    , next
+    , sizeInBits
+    , sizeInBytes
+    , sizeInWords
+    )
 
 {-|
 
@@ -32,6 +31,7 @@ next alg words =
     in
     ( if List.isEmpty chunk then
         Nothing
+
       else
         Just chunk
     , List.drop n words
