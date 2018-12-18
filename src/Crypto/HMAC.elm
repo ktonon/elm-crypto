@@ -1,19 +1,8 @@
-module Crypto.HMAC
-    exposing
-        ( Hash
-        , Key
-        , KeyBytes
-        , Message
-        , MessageBytes
-        , digest
-        , digestBytes
-        , sha224
-        , sha256
-        , sha384
-        , sha512
-        , sha512_224
-        , sha512_256
-        )
+module Crypto.HMAC exposing
+    ( digest, Key, Message
+    , digestBytes, KeyBytes, MessageBytes
+    , Hash, sha224, sha256, sha384, sha512, sha512_224, sha512_256
+    )
 
 {-| Compute HMAC SHA message digests.
 
@@ -38,6 +27,7 @@ import Crypto.SHA.Alg exposing (Alg(..))
 import Word exposing (Word)
 import Word.Bytes as Bytes
 import Word.Hex as Hex
+
 
 
 -- EXPOSED API

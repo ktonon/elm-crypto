@@ -2,7 +2,7 @@ module HMACTests exposing (all)
 
 import Crypto.HMAC.Digest exposing (digestBytes)
 import Crypto.SHA as SHA
-import Crypto.SHA.Alg exposing (Alg(..))
+import Crypto.SHA.Alg as Alg exposing (Alg(..))
 import Expect
 import Test exposing (Test, describe, test)
 import Word.Bytes as Bytes
@@ -26,10 +26,10 @@ hashFunctions =
 
 testCase : Int -> TestCase -> List Test
 testCase index { key, data, digests, comp } =
-    List.map2 (,) digests hashFunctions
+    List.map2 Tuple.pair digests hashFunctions
         |> List.map
             (\( digest, ( alg, blockSize ) ) ->
-                test (toString (index + 1) ++ ": " ++ toString alg) <|
+                test (String.fromInt (index + 1) ++ ": " ++ Alg.toString alg) <|
                     \_ ->
                         Expect.equal
                             digest

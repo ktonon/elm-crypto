@@ -80,12 +80,12 @@ calculateK alg l =
         c =
             Chunk.sizeInBits alg
     in
-    (c
-        - 1
-        - (8 * messageSizeBytes alg)
-        - (l % c)
-    )
-        % c
+    modBy c
+        (c
+            - 1
+            - (8 * messageSizeBytes alg)
+            - (modBy c l)
+        )
 
 
 messageSizeBytes : Alg -> Int

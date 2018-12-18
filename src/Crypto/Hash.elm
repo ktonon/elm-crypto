@@ -1,12 +1,4 @@
-module Crypto.Hash
-    exposing
-        ( sha224
-        , sha256
-        , sha384
-        , sha512
-        , sha512_224
-        , sha512_256
-        )
+module Crypto.Hash exposing (sha224, sha256, sha384, sha512, sha512_224, sha512_256)
 
 {-| Secure Hash Algorithms.
 
