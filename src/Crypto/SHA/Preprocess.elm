@@ -1,10 +1,6 @@
 module Crypto.SHA.Preprocess exposing (calculateK, preprocess)
 
 {-| SHA-2 preprocess.
-
-    import Word.Bytes exposing (fromUTF8)
-    import Crypto.SHA.Alg exposing (Alg(..))
-
 -}
 
 import Crypto.SHA.Alg exposing (Alg(..))
@@ -14,6 +10,9 @@ import Word.Bytes as Bytes
 
 {-| Append 1 + K zeros + size of message.
 
+    import Word.Bytes exposing (fromUTF8)
+    import Crypto.SHA.Alg exposing (Alg(..))
+
     preprocess SHA256 []
     --> 0x80 :: (List.repeat 63 0x00)
 
@@ -22,16 +21,21 @@ import Word.Bytes as Bytes
 
     let
         x = preprocess SHA256 (fromUTF8 "I ❤ cheese")
-        y = preprocess SHA512 (fromUTF8 "I ❤ cheese")
     in
         ( x |> List.length
-        , y |> List.length
         , x |> List.reverse |> List.head
-        , y |> List.reverse |> List.head
         )
     --> ( 64
-    --> , 128
     --> , Just <| (9 + 3) * 8
+    --> )
+
+    let
+        y = preprocess SHA512 (fromUTF8 "I ❤ cheese")
+    in
+        ( y |> List.length
+        , y |> List.reverse |> List.head
+        )
+    --> ( 128
     --> , Just <| (9 + 3) * 8
     --> )
 
@@ -51,6 +55,8 @@ postfix alg messageSize =
 
 
 {-| Calculate the amount of 0 bit padding.
+
+    import Crypto.SHA.Alg exposing (Alg(..))
 
     calculateK SHA256 0
     --> (512 - 64 - 1)
@@ -80,12 +86,12 @@ calculateK alg l =
         c =
             Chunk.sizeInBits alg
     in
-    modBy c
-        (c
-            - 1
-            - (8 * messageSizeBytes alg)
-            - (modBy c l)
-        )
+        modBy c
+            (c
+                - 1
+                - (8 * messageSizeBytes alg)
+                - (modBy c l)
+            )
 
 
 messageSizeBytes : Alg -> Int

@@ -1,16 +1,11 @@
-module Crypto.SHA.Chunk exposing
-    ( Chunk
-    , next
-    , sizeInBits
-    , sizeInBytes
-    , sizeInWords
-    )
-
-{-|
-
-    import Crypto.SHA.Alg exposing (Alg(..))
-
--}
+module Crypto.SHA.Chunk
+    exposing
+        ( Chunk
+        , next
+        , sizeInBits
+        , sizeInBytes
+        , sizeInWords
+        )
 
 import Crypto.SHA.Alg as Alg exposing (Alg(..))
 import Word exposing (Word)
@@ -29,16 +24,17 @@ next alg words =
         chunk =
             List.take n words
     in
-    ( if List.isEmpty chunk then
-        Nothing
-
-      else
-        Just chunk
-    , List.drop n words
-    )
+        ( if List.isEmpty chunk then
+            Nothing
+          else
+            Just chunk
+        , List.drop n words
+        )
 
 
 {-|
+
+    import Crypto.SHA.Alg exposing (Alg(..))
 
     sizeInBits SHA224
     --> 512
@@ -75,6 +71,8 @@ sizeInBytes alg =
 
 
 {-|
+
+    import Crypto.SHA.Alg exposing (Alg(..))
 
     sizeInWords SHA256
     --> 16
