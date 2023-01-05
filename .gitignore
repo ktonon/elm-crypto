@@ -4,3 +4,4 @@ elm-stuff
 node_modules
 tests.js
 tests/Doc
+tests/VerifyExamples
